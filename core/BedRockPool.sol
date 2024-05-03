@@ -44,8 +44,11 @@ contract BedRockPool {
         uint256 percent = Maths.normalizeFraction(amount, totalSupply);
         for (uint256 i = 1; i <= tokenCounter; i++) {
             address token = tokenArray[i];
-            uint256 rewardAmount = (poolAssets[token] * percent) / INTERNAL_DENOMINATOR; // @audit there is no decreasing possAssets
+            uint256 rewardAmount = (poolAssets[token] * percent) / INTERNAL_DENOMINATOR;
             IERC20(token).safeTransfer(msg.sender, rewardAmount);
+
+            // descrease the poolAssets for token
+            poolAssets[token] -= rewardAmount;
 
             emit RewardPaid(msg.sender, token, rewardAmount);
         }
